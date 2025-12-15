@@ -1,43 +1,46 @@
-# STEP 1: Your First Python Program - A Simple Menu
+# Personal Finance Tracker - Learning Python Step by Step
 
-print("Welcome to Finance Tracker")
-print("Let's learn Python together")
+# STEP 3: Getting User Input for Transactions
+# Now we let the USER add their own transactions!
 
-#Lets get input from the user
-name = input("What's your name?: ")
-
-#Now lets use that input
-print("Hello " + name + "!")
-print("Ready to track your finances?")
-
-# STEP 2: Learning about Lists
-# A list is like a container that can hold multiple items
-
-# Create an empty list to store our transactions
+# Create empty list to store transactions
 transactions = []
 
-print("welcome to Finance Tracker!")
-print("Let's learn about lists!")
+
+print("=" * 40)
+print("  WELCOME TO FINANCE TRACKER")
+print("=" * 40)
 print()
 
-# Let's add some items to our list
-print("Adding transactions to our list...")
-transactions.append("Salary: $3000")
-transactions.append("Groceries: -$150")
-transactions.append("Rent: -$1000")
-
-print("Done adding")
+# Get user's name
+name = input("What's your name? ")
+print()
+print("Hello " + name + "! Let's track your finances.")
 print()
 
-# Let's see what's in our list
-print("Here are all transaction:")
-print(transactions)
+# Let's add atransaction by asking the user
+print("--- Add Your First Transaction ---")
 print()
 
-# Let's print each transaction on its own line
-print("Let's display them nicely:")
-for transaction in transactions:
-    print("- " + transaction)
+# Ask for Transaction type
+trans_type = input("Is this income or expense? ")
+
+# Ask for amount
+amount = input("How much? $")
+
+# Ask for description 
+description = input("What's it for? ")
+
+# Combine all the information into one string
+transaction = trans_type + ": $" + amount + " - " + description
+
+# Add it to your list
+transactions.append(transaction)
 
 print()
-print("Total number of transactions:", len(transactions))
+print("--- All your Transactions ---")
+for t in transactions:
+    print("- " + t)
+
+print()
+print("Total Transactions:", len(transactions))

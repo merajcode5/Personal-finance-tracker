@@ -3,6 +3,9 @@
 # STEP 3: Getting User Input for Transactions
 # Now we let the USER add their own transactions!
 
+# Personal Finance Tracker - Step 4: Menu with Loop
+
+
 # Create empty list to store transactions
 transactions = []
 
@@ -18,29 +21,58 @@ print()
 print("Hello " + name + "! Let's track your finances.")
 print()
 
-# Let's add atransaction by asking the user
-print("--- Add Your First Transaction ---")
-print()
+# This is the MAIN LOOP - it keeps the program running
+while True:
+    # Display the menu
+    print("-" * 40)
+    print("MENU")
+    print("-" * 40)
+    print("1. Add Transaction")
+    print("2. View All Transactions")
+    print("3. Exit")
+    print("-" * 40)
 
-# Ask for Transaction type
-trans_type = input("Is this income or expense? ")
+    # Get user's choice
+    choice = input("Choose an option (1-3): ")
+    print()
 
-# Ask for amount
-amount = input("How much? $")
+    # CHeck what the user chose
+    if choice == "1":
+        # ADD TRANSACTION
+        print("--- Add Transaction ---")
+        trans_Type = input("Type (income/expense): ")
+        amount = input("Amount: $")
+        description = input("Description: ")
 
-# Ask for description 
-description = input("What's it for? ")
+        # Create the transaction and add to list
+        transaction = trans_Type + ": $" + amount + " - " + description
+        transactions.append(transaction)
 
-# Combine all the information into one string
-transaction = trans_type + ": $" + amount + " - " + description
+        print()
+        print("✓ Transaction added!")
+        print()
 
-# Add it to your list
-transactions.append(transaction)
+    elif choice == "2":
+        # VIEW ALL TRANSACTIONS
+        print("--- All Transactions ---") 
 
-print()
-print("--- All your Transactions ---")
-for t in transactions:
-    print("- " + t)
+        # Check if list is empty
+        if len(transactions) == 0:
+            print("No transactions yet. Add some first!")
+        else:
+            for t in transactions:
+                print("- " + t)
+            print()
+            print("Total:", len(transactions), "transactions")
+        print()
 
-print()
-print("Total Transactions:", len(transactions))
+    elif choice == "3":
+        #Exit
+        print("Thanks for using Finance Tracker. " + name + "!")
+        print("Goodbye!")
+        break # This EXITS the loop and ends the program
+
+    else:
+        # invalid choice
+        print("invalid choice! Please enter 1, 2, or 3.")
+        print()

@@ -1,7 +1,37 @@
-# Personal Finance Tracker - Step 8: Financial Summary
+# Personal Finance Tracker - Step 10: Complete Version!
+
+import json
 
 # Global list to store all transactions
 transactions = []
+
+
+def load_data():
+    """Load transactions from file when program starts"""
+    global transactions
+    
+    try:
+        with open("finance_data.json", "r") as file:
+            transactions = json.load(file)
+            print("✓ Loaded", len(transactions), "transactions from file.")
+    except FileNotFoundError:
+        print("No previous data found. Starting fresh!")
+        transactions = []
+    except json.JSONDecodeError:
+        print("⚠ Data file is corrupted. Starting fresh!")
+        transactions = []
+
+
+def save_data():
+    """Save transactions to file"""
+    global transactions
+    
+    try:
+        with open("finance_data.json", "w") as file:
+            json.dump(transactions, file, indent=2)
+        print("✓ Data saved successfully!")
+    except Exception as e:
+        print("❌ Error saving data:", str(e))
 
 
 def show_menu():
@@ -12,7 +42,8 @@ def show_menu():
     print("1. Add Transaction")
     print("2. View All Transactions")
     print("3. View Summary")
-    print("4. Exit")
+    print("4. Delete Transaction")
+    print("5. Exit")
     print("-" * 40)
 
 
@@ -58,6 +89,7 @@ def add_transaction():
     }
     
     transactions.append(transaction)
+    save_data()
     
     print()
     print("✓ Transaction added successfully!")
@@ -65,7 +97,7 @@ def add_transaction():
 
 
 def view_transactions():
-    """Display all transactions"""
+    """Display all transactions with numbering"""
     global transactions
     
     print("--- All Transactions ---")
@@ -73,8 +105,8 @@ def view_transactions():
     if len(transactions) == 0:
         print("No transactions yet. Add some first!")
     else:
-        for t in transactions:
-            print("- " + t["type"].capitalize() + ": $" + t["amount"] + " - " + t["description"])
+        for i, t in enumerate(transactions, 1):
+            print(str(i) + ". " + t["type"].capitalize() + ": $" + t["amount"] + " - " + t["description"])
         print()
         print("Total:", len(transactions), "transactions")
     print()
@@ -95,19 +127,19 @@ def view_summary():
     total_income = 0
     total_expense = 0
     
-    # Loop through all transactions and calculate totals
+    # Calculate totals
     for t in transactions:
-        amount = float(t["amount"])  # Convert string to number
+        amount = float(t["amount"])
         
         if t["type"] == "income":
-            total_income = total_income + amount
+            total_income += amount
         elif t["type"] == "expense":
-            total_expense = total_expense + amount
+            total_expense += amount
     
     # Calculate balance
     balance = total_income - total_expense
     
-    # Display the summary
+    # Display summary
     print()
     print("Total Income:  $" + str(total_income))
     print("Total Expense: $" + str(total_expense))
@@ -115,7 +147,7 @@ def view_summary():
     print("Balance:       $" + str(balance))
     print()
     
-    # Give feedback based on balance
+    # Feedback
     if balance > 0:
         print("✓ Great! You're saving money! 💰")
     elif balance == 0:
@@ -126,11 +158,72 @@ def view_summary():
     print()
 
 
+def delete_transaction():
+    """Delete a transaction by number"""
+    global transactions
+    
+    print("--- Delete Transaction ---")
+    
+    # Check if list is empty
+    if len(transactions) == 0:
+        print("No transactions to delete!")
+        print()
+        return
+    
+    # Show all transactions first
+    print("Current transactions:")
+    for i, t in enumerate(transactions, 1):
+        print(str(i) + ". " + t["type"].capitalize() + ": $" + t["amount"] + " - " + t["description"])
+    print()
+    
+    # Get transaction number to delete
+    while True:
+        choice = input("Enter transaction number to delete (or 0 to cancel): ").strip()
+        
+        try:
+            # Convert to integer
+            num = int(choice)
+            
+            # Check if user wants to cancel
+            if num == 0:
+                print("Delete cancelled.")
+                print()
+                return
+            
+            # Check if number is valid (1 to length of list)
+            if 1 <= num <= len(transactions):
+                # Convert to list index (subtract 1)
+                index = num - 1
+                
+                # Get the transaction we're about to delete
+                deleted = transactions[index]
+                
+                # Delete it using pop()
+                transactions.pop(index)
+                
+                # Save the changes
+                save_data()
+                
+                print()
+                print("✓ Deleted:", deleted["type"].capitalize(), "$" + deleted["amount"], "-", deleted["description"])
+                print()
+                break
+            else:
+                print("❌ Invalid number! Choose between 1 and", len(transactions))
+        
+        except ValueError:
+            print("❌ Please enter a valid number!")
+
+
 def main():
     """Main function that runs everything"""
     print("=" * 40)
     print("  WELCOME TO FINANCE TRACKER")
     print("=" * 40)
+    print()
+    
+    # Load data when program starts
+    load_data()
     print()
     
     # Get user's name with validation
@@ -149,7 +242,7 @@ def main():
     while True:
         show_menu()
         
-        choice = input("Choose an option (1-4): ").strip()
+        choice = input("Choose an option (1-5): ").strip()
         print()
         
         if choice == "1":
@@ -162,12 +255,15 @@ def main():
             view_summary()
         
         elif choice == "4":
+            delete_transaction()
+        
+        elif choice == "5":
             print("Thanks for using Finance Tracker, " + name + "!")
             print("Goodbye!")
             break
         
         else:
-            print("❌ Invalid choice! Please enter 1, 2, 3, or 4.")
+            print("❌ Invalid choice! Please enter 1, 2, 3, 4, or 5.")
             print()
 
 

@@ -1,4 +1,4 @@
-# Personal Finance Tracker - Step 7: Input Validation
+# Personal Finance Tracker - Step 8: Financial Summary
 
 # Global list to store all transactions
 transactions = []
@@ -11,7 +11,8 @@ def show_menu():
     print("-" * 40)
     print("1. Add Transaction")
     print("2. View All Transactions")
-    print("3. Exit")
+    print("3. View Summary")
+    print("4. Exit")
     print("-" * 40)
 
 
@@ -21,44 +22,41 @@ def add_transaction():
     
     print("--- Add Transaction ---")
     
-    # VALIDATION 1: Check transaction type
+    # Validate transaction type
     while True:
         trans_type = input("Type (income/expense): ").lower()
         if trans_type == "income" or trans_type == "expense":
-            break  # Valid input, exit the loop
+            break
         else:
             print("❌ Invalid! Please enter 'income' or 'expense'.")
     
-    # VALIDATION 2: Check amount is a number
+    # Validate amount
     while True:
         amount = input("Amount: $")
         try:
-            # Try to convert to float (decimal number)
             amount_float = float(amount)
             if amount_float > 0:
-                break  # Valid positive number, exit the loop
+                break
             else:
                 print("❌ Amount must be positive!")
         except ValueError:
-            # This runs if conversion to float fails
             print("❌ Invalid! Please enter a valid number.")
     
-    # VALIDATION 3: Description (can't be empty)
+    # Validate description
     while True:
         description = input("Description: ").strip()
         if len(description) > 0:
-            break  # Not empty, exit the loop
+            break
         else:
             print("❌ Description cannot be empty!")
     
-    # Create a DICTIONARY to store the transaction
+    # Create transaction dictionary
     transaction = {
         "type": trans_type,
         "amount": amount,
         "description": description
     }
     
-    # Add the dictionary to our list
     transactions.append(transaction)
     
     print()
@@ -82,15 +80,60 @@ def view_transactions():
     print()
 
 
+def view_summary():
+    """Calculate and display financial summary"""
+    global transactions
+    
+    print("--- Financial Summary ---")
+    
+    if len(transactions) == 0:
+        print("No transactions yet. Add some to see your summary!")
+        print()
+        return
+    
+    # Initialize totals
+    total_income = 0
+    total_expense = 0
+    
+    # Loop through all transactions and calculate totals
+    for t in transactions:
+        amount = float(t["amount"])  # Convert string to number
+        
+        if t["type"] == "income":
+            total_income = total_income + amount
+        elif t["type"] == "expense":
+            total_expense = total_expense + amount
+    
+    # Calculate balance
+    balance = total_income - total_expense
+    
+    # Display the summary
+    print()
+    print("Total Income:  $" + str(total_income))
+    print("Total Expense: $" + str(total_expense))
+    print("=" * 40)
+    print("Balance:       $" + str(balance))
+    print()
+    
+    # Give feedback based on balance
+    if balance > 0:
+        print("✓ Great! You're saving money! 💰")
+    elif balance == 0:
+        print("⚠ You're breaking even. Try to save more!")
+    else:
+        print("⚠ Warning! You're spending more than you earn! 📉")
+    
+    print()
+
+
 def main():
     """Main function that runs everything"""
-    # Welcome message
     print("=" * 40)
     print("  WELCOME TO FINANCE TRACKER")
     print("=" * 40)
     print()
     
-    # Get user's name (with validation!)
+    # Get user's name with validation
     while True:
         name = input("What's your name? ").strip()
         if len(name) > 0:
@@ -106,7 +149,7 @@ def main():
     while True:
         show_menu()
         
-        choice = input("Choose an option (1-3): ").strip()
+        choice = input("Choose an option (1-4): ").strip()
         print()
         
         if choice == "1":
@@ -116,12 +159,15 @@ def main():
             view_transactions()
         
         elif choice == "3":
+            view_summary()
+        
+        elif choice == "4":
             print("Thanks for using Finance Tracker, " + name + "!")
             print("Goodbye!")
             break
         
         else:
-            print("❌ Invalid choice! Please enter 1, 2, or 3.")
+            print("❌ Invalid choice! Please enter 1, 2, 3, or 4.")
             print()
 
 
